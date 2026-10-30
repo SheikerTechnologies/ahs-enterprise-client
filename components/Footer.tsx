@@ -116,8 +116,13 @@ export async function Footer() {
           <p className="font-mono text-[0.68rem] text-white/35">
             © {new Date().getFullYear()} {companyInfo.name}. All rights reserved.
           </p>
-          <p className="font-mono text-[0.68rem] text-white/35">
-            Demo build — client-side preview
+           <p className="font-mono text-[0.68rem] text-white/35">
+            Developed by <a
+                  href="https://www.linkedin.com/in/obaidullah30"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className=" rounded-sm border border-white/10 px-2 py-1 hover:border-blue-800 transition-colors"
+                > Muhammad Obaidullah</a>
           </p>
         </div>
       </div>
