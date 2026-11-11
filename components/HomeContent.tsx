@@ -3,7 +3,15 @@ import { Services } from "./Services";
 import { Capability } from "./Capability";
 import { Clients } from "./Clients";
 import { ProjectsGrid } from "./ProjectsGrid";
-import type { ClientItem, CompanyInfo, Project, Service, Stat } from "@/lib/data";
+import { Faq } from "./Faq";
+import type {
+  ClientItem,
+  CompanyInfo,
+  FaqItem,
+  Project,
+  Service,
+  Stat,
+} from "@/lib/data";
 
 export function HomeContent({
   projects,
@@ -11,12 +19,14 @@ export function HomeContent({
   clients,
   stats,
   company,
+  faqs,
 }: {
   projects: Project[];
   services: Service[];
   clients: ClientItem[];
   stats: Stat[];
   company: CompanyInfo;
+  faqs: FaqItem[];
 }) {
   return (
     <>
@@ -36,7 +46,7 @@ export function HomeContent({
         ]}
         riskHandling={["High water-flow conditions", "Emergency execution pressure", "Remote logistics"]}
       />
-      <ProjectsGrid projects={projects.slice(0, 6)} />
+      <ProjectsGrid projects={projects.slice(0, 6)} marquee />
       <Clients clients={clients} />
       <section className="bg-paper py-20">
         <div className="container-x">
@@ -53,6 +63,7 @@ export function HomeContent({
           </div>
         </div>
       </section>
+      <Faq faqs={faqs} phones={company.phones} />
     </>
   );
 }

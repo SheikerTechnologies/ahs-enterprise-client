@@ -25,9 +25,9 @@ export async function Footer() {
       <div className="container-x">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-3">
           <div>
-            <Link href="/" className="flex items-center gap-2.5">
+            <Link href="/" className="flex items-center gap-1">
               <Image
-                src="/images/logo-mark.png"
+                src="/images/logo.png"
                 alt="AHS Enterprise"
                 width={34}
                 height={34}

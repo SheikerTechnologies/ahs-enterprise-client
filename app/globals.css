@@ -225,6 +225,140 @@ body {
   }
 }
 
+.gallery-marquee {
+  overflow: hidden;
+  padding-block: 0.5rem 1rem;
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 4%,
+    #000 96%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 4%,
+    #000 96%,
+    transparent
+  );
+}
+
+.gallery-marquee__track {
+  display: flex;
+  width: max-content;
+  animation: marquee 55s linear infinite;
+}
+
+.gallery-marquee:hover .gallery-marquee__track,
+.gallery-marquee:focus-within .gallery-marquee__track {
+  animation-play-state: paused;
+}
+
+.gallery-marquee__group {
+  display: flex;
+  gap: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.marquee-3d {
+  perspective: 900px;
+  perspective-origin: 50% 50%;
+  overflow: hidden;
+  padding-block: 0.75rem 1.5rem;
+}
+
+.marquee-3d__row {
+  overflow: hidden;
+  padding-block: 0.35rem;
+  transform-style: preserve-3d;
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 6%,
+    #000 94%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 6%,
+    #000 94%,
+    transparent
+  );
+}
+
+.marquee-3d__row--a {
+  transform: rotateX(20deg) rotateZ(-1.5deg);
+}
+
+.marquee-3d__row--b {
+  transform: rotateX(20deg) rotateZ(1.5deg);
+  margin-top: -0.5rem;
+}
+
+.marquee-3d__track {
+  display: flex;
+  width: max-content;
+  animation: marquee-3d-forward 48s linear infinite;
+}
+
+.marquee-3d__row--b .marquee-3d__track {
+  animation-name: marquee-3d-reverse;
+  animation-duration: 58s;
+}
+
+.marquee-3d:hover .marquee-3d__track {
+  animation-play-state: paused;
+}
+
+.marquee-3d__group {
+  display: flex;
+  gap: 1.25rem;
+  padding-right: 1.25rem;
+}
+
+.marquee-3d__card {
+  display: flex;
+  width: 11.5rem;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  padding: 1.25rem 1rem 1rem;
+  border: 1px solid rgba(10, 37, 64, 0.1);
+  border-radius: 2px;
+  background: #fff;
+  box-shadow: 0 20px 32px -24px rgba(10, 37, 64, 0.5);
+  transition:
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.marquee-3d__card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 28px 40px -24px rgba(10, 37, 64, 0.55);
+}
+
+@keyframes marquee-3d-forward {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes marquee-3d-reverse {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
 :focus-visible {
   outline: 2px solid var(--color-amber);
   outline-offset: 3px;

@@ -110,7 +110,7 @@ export function Hero({ stats }: { stats: Stat[] }) {
             </motion.div>
             <div className="absolute inset-8 overflow-hidden rounded-full ring-4 ring-ink shadow-2xl">
               <Image
-                src="/images/hero-submarine.jpg"
+                src="/images/submarine.jpeg"
                 alt="Submarine machinery spares supplied by AHS Enterprise for BNS Joyjatra, Bangladesh Navy"
                 fill
                 sizes="(max-width: 768px) 320px, 420px"

@@ -737,24 +737,79 @@ export const defenseSupplyGroups = [
   "Fitness Equipment, Chemicals & Packing Materials",
 ];
 
-export const clients = [
-  { name: "BIWTA", full: "Bangladesh Inland Water Transport Authority" },
+export type ClientItem = { name: string; full: string; image?: string };
+
+export const clients: ClientItem[] = [
+  {
+    name: "BIWTA",
+    full: "Bangladesh Inland Water Transport Authority",
+    image: "/images/clients/biwta.png",
+  },
   { name: "NSSD", full: "Naval Stores & Supply Depot" },
-  { name: "Bangladesh Navy", full: "Bangladesh Navy" },
-  { name: "CPA", full: "Chittagong Port Authority" },
-  { name: "MPA", full: "Mongla Port Authority" },
+  {
+    name: "Bangladesh Navy",
+    full: "Bangladesh Navy",
+    image: "/images/clients/bangladesh-navy.png",
+  },
+  {
+    name: "CPA",
+    full: "Chittagong Port Authority",
+    image: "/images/clients/chittagong-port.png",
+  },
+  {
+    name: "MPA",
+    full: "Mongla Port Authority",
+    image: "/images/clients/mongla-port.png",
+  },
   { name: "PPA", full: "Payra Port Authority" },
   { name: "DGDP", full: "Directorate General of Defence Purchase" },
-  { name: "Dhaka Cantonment Board", full: "Dhaka Cantonment Board" },
-  { name: "MES", full: "Military Engineering Services" },
-  { name: "RAJUK", full: "Rajdhani Unnayan Kartripakkha" },
-  { name: "PWD", full: "Public Works Department" },
+  {
+    name: "Dhaka Cantonment Board",
+    full: "Dhaka Cantonment Board",
+    image: "/images/clients/dhaka-cantonment-board.png",
+  },
+  {
+    name: "MES",
+    full: "Military Engineering Services",
+    image: "/images/clients/mes.png",
+  },
+  {
+    name: "RAJUK",
+    full: "Rajdhani Unnayan Kartripakkha",
+    image: "/images/clients/rajuk.png",
+  },
+  {
+    name: "PWD",
+    full: "Public Works Department",
+    image: "/images/clients/pwd.png",
+  },
   { name: "RHD", full: "Roads and Highways Department" },
-  { name: "BADC", full: "Bangladesh Agricultural Development Corporation" },
-  { name: "Coast Guard", full: "Bangladesh Coast Guard" },
+  {
+    name: "BADC",
+    full: "Bangladesh Agricultural Development Corporation",
+    image: "/images/clients/badc.png",
+  },
+  {
+    name: "Coast Guard",
+    full: "Bangladesh Coast Guard",
+    image: "/images/clients/coast-guard.png",
+  },
   { name: "HED", full: "Health Engineering Department" },
-  { name: "DPHE", full: "Department of Public Health Engineering" },
-  { name: "CAAB", full: "Civil Aviation Authority of Bangladesh" },
+  {
+    name: "DPHE",
+    full: "Department of Public Health Engineering",
+    image: "/images/clients/dphe.png",
+  },
+  {
+    name: "CAAB",
+    full: "Civil Aviation Authority of Bangladesh",
+    image: "/images/clients/CAAB.png",
+  },
+  {
+    name: "Govt. of Bangladesh",
+    full: "Government of the People's Republic of Bangladesh",
+    image: "/images/clients/bangladesh-govt.png",
+  },
 ];
 
 export const bankingPartners = [
@@ -824,7 +879,6 @@ export const companyInfo = {
 export type CompanyInfo = typeof companyInfo;
 export type Stat = (typeof stats)[number];
 export type CapabilityItem = (typeof capability)[number];
-export type ClientItem = (typeof clients)[number];
 export type FaqItem = { q: string; a: string };
 
 export const faqs: FaqItem[] = [

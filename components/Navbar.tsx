@@ -7,11 +7,11 @@ import { useEffect, useState } from "react";
 import { Menu, X, ArrowUpRight } from "lucide-react";
 
 const links = [
+  { href: "/", label: "Home" },
   { href: "/about", label: "About" },
   { href: "/services", label: "Services" },
   { href: "/projects", label: "Projects" },
   { href: "/clients", label: "Clients" },
-  { href: "/faq", label: "FAQ" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -19,6 +19,8 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const isActive = (href: string) =>
+    href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -38,7 +40,7 @@ export function Navbar() {
       <div className="container-x flex h-16 items-center justify-between md:h-20">
         <Link href="/" className="flex items-center gap-2.5 shrink-0">
           <Image
-            src="/images/logo-mark.png"
+            src="/images/logo.png"
             alt="AHS Enterprise"
             width={36}
             height={36}
@@ -51,12 +53,10 @@ export function Navbar() {
 
         <nav className="hidden lg:flex items-center gap-8">
           {links.map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              aria-current={pathname.startsWith(l.href) ? "page" : undefined}
+            <Link key={l.href} href={l.href}
+              aria-current={isActive(l.href) ? "page" : undefined}
               className={`eyebrow transition-colors hover:text-amber ${
-                pathname.startsWith(l.href) ? "text-amber" : "text-white/70"
+                isActive(l.href) ? "text-amber" : "text-white/70"
               }`}
             >
               {l.label}
@@ -90,7 +90,7 @@ export function Navbar() {
               <Link
                 key={l.href}
                 href={l.href}
-                aria-current={pathname.startsWith(l.href) ? "page" : undefined}
+                aria-current={isActive(l.href) ? "page" : undefined}
                 onClick={() => setOpen(false)}
                 className="py-3 font-mono text-sm uppercase tracking-wider text-white/80 hover:text-amber border-b border-white/5 last:border-none"
               >

@@ -22,6 +22,7 @@ export default async function Home() {
         clients={clients}
         stats={settings.stats}
         company={settings.company}
+        faqs={settings.faqs}
       />
       <Footer />
     </>
