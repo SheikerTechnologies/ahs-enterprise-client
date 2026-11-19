@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Trash2 } from "lucide-react";
+import { ImageField, GalleryField } from "./ImageUploader";
 
 export type ProjectFormValues = {
   slug: string;
@@ -36,7 +37,7 @@ const hint = "mt-1 text-xs text-ink-muted";
 export function ProjectForm({ id, initial }: { id?: string; initial?: ProjectFormValues }) {
   const router = useRouter();
   const [v, setV] = useState<ProjectFormValues>(initial ?? empty);
-  const [galleryText, setGalleryText] = useState((initial?.gallery ?? []).join("\n"));
+  const [gallery, setGallery] = useState<string[]>(initial?.gallery ?? []);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
@@ -47,7 +48,7 @@ export function ProjectForm({ id, initial }: { id?: string; initial?: ProjectFor
     const res = await fetch(url, {
       method,
       headers: { "Content-Type": "application/json" },
-      body: method === "DELETE" ? undefined : JSON.stringify({ ...v, gallery: galleryText.split("\n") }),
+      body: method === "DELETE" ? undefined : JSON.stringify({ ...v, gallery }),
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data.error || "Something went wrong.");
@@ -125,16 +126,9 @@ export function ProjectForm({ id, initial }: { id?: string; initial?: ProjectFor
         </div>
       </section>
 
-      <section className="grid gap-5 rounded-sm border border-ink/10 bg-white p-6">
-        <div>
-          <label className={label}>Main image path *</label>
-          <input className={input} required value={v.image} onChange={(e) => set("image", e.target.value)} placeholder="/images/gallery/example.jpg" />
-          <p className={hint}>Put the file in <code>public/images/…</code> and write its path here. Direct upload comes in a later step.</p>
-        </div>
-        <div>
-          <label className={label}>More gallery images (one path per line)</label>
-          <textarea className={`${input} font-mono text-xs`} rows={3} value={galleryText} onChange={(e) => setGalleryText(e.target.value)} />
-        </div>
+      <section className="grid gap-6 rounded-sm border border-ink/10 bg-white p-6">
+        <ImageField id="main-image" text="Main image *" value={v.image} onChange={(x) => set("image", x)} folder="projects" hint="Shown on the project card and at the top of the project page." />
+        <GalleryField value={gallery} onChange={setGallery} folder="projects" />
       </section>
 
       <section className="rounded-sm border border-ink/10 bg-white p-6">

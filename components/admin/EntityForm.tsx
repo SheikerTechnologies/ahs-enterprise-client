@@ -2,11 +2,13 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { ImageField } from "./ImageUploader";
 
 export type Field = {
   name: string;
   label: string;
-  type?: "text" | "textarea" | "number";
+  type?: "text" | "textarea" | "number" | "image";
+  folder?: string;
   required?: boolean;
   placeholder?: string;
   hint?: string;
@@ -72,7 +74,10 @@ export function EntityForm({
       className="max-w-2xl space-y-6"
     >
       <div className="grid gap-5 rounded-sm border border-ink/10 bg-white p-6">
-        {fields.map((f) => (
+        {fields.map((f) =>
+          f.type === "image" ? (
+            <ImageField key={f.name} id={f.name} text={f.label} hint={f.hint} folder={f.folder} value={values[f.name]} onChange={(v) => setValues({ ...values, [f.name]: v })} />
+          ) : (
           <div key={f.name}>
             <label htmlFor={f.name} className={label}>
               {f.label}
@@ -85,7 +90,8 @@ export function EntityForm({
             )}
             {f.hint && <p className="mt-1 text-xs text-ink-muted">{f.hint}</p>}
           </div>
-        ))}
+          )
+        )}
         <label className="flex items-center gap-2 text-sm text-ink">
           <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} className="h-4 w-4" />
           Visible on the website

@@ -11,6 +11,6 @@ export const serviceFields: Field[] = [
 export const clientFields: Field[] = [
   { name: "name", label: "Short name", required: true, placeholder: "BIWTA" },
   { name: "full", label: "Full name", required: true, placeholder: "Bangladesh Inland Water Transport Authority" },
+  { name: "image", label: "Logo", type: "image", folder: "clients", hint: "Upload a logo (PNG with transparent background works best), or leave empty for no logo." },
   { name: "order", label: "Order", type: "number", hint: "Lower numbers appear first. Blank = last." },
-  { name: "image", label: "Logo image path", placeholder: "/images/clients/biwta.png", hint: "File must be in public/images/… Leave blank for no logo." },
 ];
