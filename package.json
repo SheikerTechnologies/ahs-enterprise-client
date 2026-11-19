@@ -7,10 +7,14 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "seed": "tsx --env-file=.env.local scripts/seed.ts"
+    "seed": "tsx --env-file=.env.local scripts/seed.ts",
+    "create-admin": "tsx --env-file=.env.local scripts/create-admin.ts",
+    "sync-clients": "tsx --env-file=.env.local scripts/sync-client-extras.ts"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "framer-motion": "^13.1.0",
+    "jose": "^6.2.17",
     "lucide-react": "^1.33.0",
     "mongoose": "^9.11.2",
     "next": "16.3.1",

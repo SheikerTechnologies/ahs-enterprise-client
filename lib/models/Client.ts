@@ -4,6 +4,7 @@ const ClientSchema = new Schema(
   {
     name: { type: String, required: true, unique: true, trim: true },
     full: { type: String, required: true, trim: true },
+    image: { type: String, default: "", trim: true },
     order: { type: Number, default: 0, index: true },
     published: { type: Boolean, default: true },
   },
