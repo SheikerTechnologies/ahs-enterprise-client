@@ -1,4 +1,4 @@
-import { BD_MAP_WIDTH, BD_MAP_HEIGHT } from "./bangladeshOutline";
+import { bangladeshOutlinePaths, BD_MAP_WIDTH, BD_MAP_HEIGHT } from "./bangladeshOutline";
 
 // Must match the bounds used to generate bangladeshOutline.ts
 const LON_MIN = 88.0;
@@ -11,4 +11,76 @@ export function projectToMap(lat: number, lng: number) {
     x: Math.round(((lng - LON_MIN) / (LON_MAX - LON_MIN)) * BD_MAP_WIDTH * 10) / 10,
     y: Math.round(((LAT_MAX - lat) / (LAT_MAX - LAT_MIN)) * BD_MAP_HEIGHT * 10) / 10,
   };
+}
+
+type Pt = [number, number];
+
+const polygons: Pt[][] = bangladeshOutlinePaths.map((d) =>
+  (d.match(/-?\d+(?:\.\d+)?,-?\d+(?:\.\d+)?/g) ?? []).map((s) => s.split(",").map(Number) as Pt)
+);
+
+function inPolygon([x, y]: Pt, poly: Pt[]) {
+  let inside = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const [xi, yi] = poly[i];
+    const [xj, yj] = poly[j];
+    if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) inside = !inside;
+  }
+  return inside;
+}
+
+/** Nearest point on any outline edge. */
+function nearestEdge(p: Pt) {
+  let best = { q: polygons[0][0], d: Infinity, poly: polygons[0] };
+  for (const poly of polygons) {
+    for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+      const [ax, ay] = poly[j];
+      const [bx, by] = poly[i];
+      const dx = bx - ax;
+      const dy = by - ay;
+      const len2 = dx * dx + dy * dy;
+      const t = len2 ? Math.max(0, Math.min(1, ((p[0] - ax) * dx + (p[1] - ay) * dy) / len2)) : 0;
+      const q: Pt = [ax + t * dx, ay + t * dy];
+      const d = Math.hypot(p[0] - q[0], p[1] - q[1]);
+      if (d < best.d) best = { q, d, poly };
+    }
+  }
+  return best;
+}
+
+function insideAny(p: Pt) {
+  return polygons.some((poly) => inPolygon(p, poly));
+}
+
+/** Nearest point to `p` that is on land and at least `margin` away from the coast. */
+function searchLand(p: Pt, margin: number): Pt | null {
+  for (const radius of [12, 24, 48, 96, 160]) {
+    const step = Math.max(1, radius / 16);
+    let best: { pt: Pt; dist: number } | null = null;
+    for (let gx = p[0] - radius; gx <= p[0] + radius; gx += step) {
+      for (let gy = p[1] - radius; gy <= p[1] + radius; gy += step) {
+        const q: Pt = [gx, gy];
+        const dist = Math.hypot(gx - p[0], gy - p[1]);
+        if (dist > radius || (best && dist >= best.dist) || !insideAny(q)) continue;
+        if (nearestEdge(q).d >= margin) best = { pt: q, dist };
+      }
+    }
+    if (best) return best.pt;
+  }
+  return null;
+}
+
+/**
+ * Keeps a map pin fully inside the Bangladesh outline: a pin that falls outside
+ * (or too close to the coast for its circle to fit) is moved to the nearest
+ * point of land that has room for it. Tiny islands get the best fit available.
+ */
+export function snapInside(x: number, y: number, margin = 9) {
+  const p: Pt = [x, y];
+  if (insideAny(p) && nearestEdge(p).d >= margin) return { x, y };
+  for (const m of [margin, margin * 0.6, 3, 1]) {
+    const found = searchLand(p, m);
+    if (found) return { x: Math.round(found[0] * 10) / 10, y: Math.round(found[1] * 10) / 10 };
+  }
+  return { x, y };
 }

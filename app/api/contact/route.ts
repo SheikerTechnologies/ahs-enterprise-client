@@ -1,6 +1,7 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import { connectDB, isDbConfigured } from "@/lib/mongodb";
 import { ContactMessageModel } from "@/lib/models/ContactMessage";
+import { sendEnquiryNotification } from "@/lib/email";
 
 export const dynamic = "force-dynamic";
 
@@ -49,6 +50,18 @@ export async function POST(req: Request) {
   try {
     await connectDB();
     await ContactMessageModel.create({ name, organisation, email, message, ip });
+
+    // Email the owner. Runs after the response is sent; a mail failure never affects the visitor.
+    const notify = () =>
+      sendEnquiryNotification({ name, organisation, email, message }).catch((err) =>
+        console.error("[contact] notification email failed:", err)
+      );
+    try {
+      after(notify);
+    } catch {
+      void notify();
+    }
+
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error("[contact] save failed:", err);

@@ -1,14 +1,31 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { Reveal } from "./Reveal";
 import type { CompanyInfo } from "@/lib/data";
-import { Phone, Mail, MapPin, ArrowUpRight, Send, MessageCircle, FileDown } from "lucide-react";
+import { Phone, Mail, MapPin, ArrowUpRight, Send, MessageCircle, FileDown, CheckCircle2, AlertCircle, Loader2, X } from "lucide-react";
 
 type Status = { state: "idle" | "sending" | "success" | "error"; message?: string };
 
 export function Contact({ company: companyInfo }: { company: CompanyInfo }) {
   const [status, setStatus] = useState<Status>({ state: "idle" });
+  const isSending = status.state === "sending";
+  const isSuccess = status.state === "success";
+  const isError = status.state === "error";
+
+  function closePopup() {
+    if (!isSending) setStatus({ state: "idle" });
+  }
+
+  useEffect(() => {
+    if (!isSuccess && !isError) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setStatus({ state: "idle" });
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [isSuccess, isError]);
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -130,13 +147,6 @@ export function Contact({ company: companyInfo }: { company: CompanyInfo }) {
                     {status.state === "sending" ? "Sending…" : "Send Enquiry"}
                     <Send size={14} />
                   </button>
-                  <p
-                    role="status"
-                    aria-live="polite"
-                    className={`mt-4 text-sm ${status.state === "error" ? "text-buoy" : "text-chart-green"}`}
-                  >
-                    {status.message}
-                  </p>
                 </div>
               </form>
             </Reveal>
@@ -157,6 +167,111 @@ export function Contact({ company: companyInfo }: { company: CompanyInfo }) {
           />
         </Reveal>
       </div>
+
+      {/* Enquiry status pop-up */}
+      <AnimatePresence>
+        {status.state !== "idle" && (
+          <motion.div
+            key="enquiry-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.22 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-ink/60 p-5 backdrop-blur-sm"
+            onClick={closePopup}
+          >
+            <motion.div
+              role="alertdialog"
+              aria-modal="true"
+              aria-labelledby="enquiry-popup-title"
+              aria-describedby="enquiry-popup-message"
+              initial={{ opacity: 0, scale: 0.92, y: 24 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: 12 }}
+              transition={{ type: "spring", stiffness: 320, damping: 26 }}
+              className="relative w-full max-w-md overflow-hidden rounded-sm border border-ink/10 bg-paper p-8 shadow-[0_40px_80px_-40px_rgba(10,37,64,0.7)]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div
+                className={`absolute inset-x-0 top-0 h-1 ${
+                  isSending ? "bg-amber" : isSuccess ? "bg-chart-green" : "bg-buoy"
+                }`}
+              />
+              {!isSending && (
+                <button
+                  type="button"
+                  onClick={closePopup}
+                  aria-label="Close"
+                  className="absolute right-4 top-4 rounded-sm p-1.5 text-ink-muted transition-colors hover:bg-ink/5 hover:text-ink"
+                >
+                  <X size={16} />
+                </button>
+              )}
+
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={status.state}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.2 }}
+                  className="flex flex-col items-center pt-2 text-center"
+                >
+                  <motion.div
+                    initial={{ scale: 0.5, opacity: 0 }}
+                    animate={
+                      isError
+                        ? { scale: 1, opacity: 1, x: [0, -6, 6, -4, 4, 0] }
+                        : { scale: 1, opacity: 1 }
+                    }
+                    transition={
+                      isError
+                        ? { duration: 0.5, ease: "easeInOut" }
+                        : { type: "spring", stiffness: 300, damping: 18 }
+                    }
+                    className={`flex h-16 w-16 items-center justify-center rounded-full ${
+                      isSending
+                        ? "bg-amber/10 text-amber"
+                        : isSuccess
+                          ? "bg-chart-green/10 text-chart-green"
+                          : "bg-buoy/10 text-buoy"
+                    }`}
+                  >
+                    {isSending && <Loader2 size={30} className="animate-spin" />}
+                    {isSuccess && <CheckCircle2 size={30} />}
+                    {isError && <AlertCircle size={30} />}
+                  </motion.div>
+
+                  <p className="eyebrow mt-5 text-ink-muted">Enquiry Status</p>
+                  <h3
+                    id="enquiry-popup-title"
+                    className="font-display mt-2 text-2xl font-extrabold uppercase tracking-tight text-ink"
+                  >
+                    {isSending ? "Sending Enquiry" : isSuccess ? "Enquiry Sent" : "Enquiry Failed"}
+                  </h3>
+                  <p id="enquiry-popup-message" className="mt-3 text-sm leading-relaxed text-ink-muted">
+                    {isSending
+                      ? "Please wait while we deliver your message."
+                      : status.message}
+                  </p>
+
+                  {!isSending && (
+                    <button
+                      type="button"
+                      onClick={closePopup}
+                      className={`mt-6 inline-flex items-center gap-2 rounded-sm px-6 py-3 font-mono text-xs font-semibold uppercase tracking-widest text-white transition-colors ${
+                        isSuccess ? "bg-chart-green hover:bg-ink" : "bg-buoy hover:bg-ink"
+                      }`}
+                    >
+                      {isSuccess ? "Done" : "Try Again"}
+                    </button>
+                  )}
+                </motion.div>
+              </AnimatePresence>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

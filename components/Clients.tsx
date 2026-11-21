@@ -64,9 +64,10 @@ function Row({
 }
 
 export function Clients({ clients }: { clients: ClientItem[] }) {
-  const split = Math.ceil(clients.length / 2);
+  const split = Math.ceil(clients.length / 3);
   const topRow = clients.slice(0, split);
-  const bottomRow = clients.slice(split);
+  const middleRow = clients.slice(split, split * 2);
+  const bottomRow = clients.slice(split * 2);
 
   return (
     <section
@@ -93,7 +94,8 @@ export function Clients({ clients }: { clients: ClientItem[] }) {
       <Reveal delay={0.15} className="mt-14">
         <div className="marquee-3d">
           <Row clients={topRow} variant="a" />
-          <Row clients={bottomRow} variant="b" />
+          <Row clients={middleRow} variant="b" />
+          <Row clients={bottomRow} variant="a" />
         </div>
       </Reveal>
     </section>

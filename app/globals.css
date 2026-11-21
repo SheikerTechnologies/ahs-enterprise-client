@@ -294,7 +294,8 @@ body {
 
 .marquee-3d__row--b {
   transform: rotateX(20deg) rotateZ(1.5deg);
-  margin-top: -0.5rem;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
 }
 
 .marquee-3d__track {
