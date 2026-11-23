@@ -84,3 +84,43 @@ export function snapInside(x: number, y: number, margin = 9) {
   }
   return { x, y };
 }
+
+// ---- divisions ----------------------------------------------------------
+
+import { bdDivisions } from "./bangladeshDivisions";
+
+function parseRings(d: string): Pt[][] {
+  return d
+    .split("Z")
+    .map((chunk) => chunk.match(/-?\d+(?:\.\d+)?,-?\d+(?:\.\d+)?/g))
+    .filter((m): m is RegExpMatchArray => Boolean(m))
+    .map((m) => m.map((s) => s.split(",").map(Number) as Pt));
+}
+
+const divisionRings = bdDivisions.map((dv) => ({ id: dv.id, rings: parseRings(dv.d) }));
+
+function distToRing(p: Pt, ring: Pt[]) {
+  let best = Infinity;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const [ax, ay] = ring[j];
+    const [bx, by] = ring[i];
+    const dx = bx - ax;
+    const dy = by - ay;
+    const len2 = dx * dx + dy * dy;
+    const t = len2 ? Math.max(0, Math.min(1, ((p[0] - ax) * dx + (p[1] - ay) * dy) / len2)) : 0;
+    best = Math.min(best, Math.hypot(p[0] - (ax + t * dx), p[1] - (ay + t * dy)));
+  }
+  return best;
+}
+
+/** Which division a map point belongs to (nearest one if it falls just offshore). */
+export function divisionIdAt(x: number, y: number): string {
+  const p: Pt = [x, y];
+  for (const dv of divisionRings) if (dv.rings.some((r) => inPolygon(p, r))) return dv.id;
+  let best = { id: divisionRings[0].id, d: Infinity };
+  for (const dv of divisionRings) for (const r of dv.rings) {
+    const d = distToRing(p, r);
+    if (d < best.d) best = { id: dv.id, d };
+  }
+  return best.id;
+}

@@ -49,7 +49,7 @@ const buildJsonLd = (companyInfo: CompanyInfo) => ({
   "@type": "LocalBusiness",
   name: "M/S A H S Enterprise",
   url: SITE_URL,
-  logo: `${SITE_URL}/images/logo-mark.png`,
+  logo: `${SITE_URL}/images/logo.png`,
   description: DESCRIPTION,
   telephone: companyInfo.phones[0],
   email: companyInfo.email,
