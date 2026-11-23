@@ -1,22 +1,38 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+import { breadcrumbJsonLd } from "@/lib/seo";
 
 export function PageHeader({
   eyebrow,
   title,
   subtitle,
   crumb,
+  path,
 }: {
   eyebrow: string;
   title: string;
   subtitle?: string;
   crumb: string;
+  /** Path of this page, e.g. "/about" — used for BreadcrumbList JSON-LD. */
+  path: string;
 }) {
+  const jsonLd = breadcrumbJsonLd([
+    { name: "Home", path: "/" },
+    { name: crumb, path },
+  ]);
+
   return (
     <section className="relative bg-ink pt-28 pb-14 text-white md:pt-36 md:pb-16 overflow-hidden">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="absolute inset-0 blueprint-grid" />
       <div className="container-x relative">
-        <nav className="flex items-center gap-1.5 font-mono text-xs uppercase tracking-widest text-white/45">
+        <nav
+          aria-label="Breadcrumb"
+          className="flex items-center gap-1.5 font-mono text-xs uppercase tracking-widest text-white/45"
+        >
           <Link href="/" className="hover:text-amber transition-colors">
             Home
           </Link>

@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   title: "Frequently Asked Questions",
   description:
     "Common questions about AHS Enterprise's licenses, enlistments, coverage area and how to submit a tender or supply enquiry.",
+  alternates: { canonical: "/faq" },
 };
 
 export const revalidate = 300;
@@ -37,6 +38,7 @@ export default async function FaqPage() {
       <main id="main" className="bg-paper">
         <PageHeader
           crumb="FAQ"
+          path="/faq"
           eyebrow="Common Questions"
           title="Frequently Asked Questions"
           subtitle="Straight answers on our licenses, coverage area, and how to work with us."

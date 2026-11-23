@@ -1,5 +1,6 @@
 import { companyInfo } from "@/lib/data";
 import { getProject, getProjects } from "@/lib/content";
+import { breadcrumbJsonLd } from "@/lib/seo";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { StatusStamp } from "@/components/StatusStamp";
@@ -24,9 +25,25 @@ export async function generateMetadata({
   const { slug } = await params;
   const project = await getProject(slug);
   if (!project) return { title: "Project Not Found | AHS Enterprise" };
+  const title = `${project.title} | ${companyInfo.shortName}`;
+  const imageAlt = `${project.title} — ${project.location}`;
   return {
-    title: `${project.title} | ${companyInfo.shortName}`,
+    title,
     description: project.summary,
+    alternates: { canonical: `/projects/${project.slug}` },
+    openGraph: {
+      type: "article",
+      title,
+      description: project.summary,
+      url: `/projects/${project.slug}`,
+      images: [{ url: project.image, alt: imageAlt }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description: project.summary,
+      images: [project.image],
+    },
   };
 }
 
@@ -44,9 +61,19 @@ export default async function ProjectPage({
   const next = projects[(idx + 1) % projects.length];
 
   const specIcons = [Layers, MapPin, Calendar, Clock, Layers, Layers];
+  const imageAlt = `${project.title} — ${project.location}`;
+  const crumbsJsonLd = breadcrumbJsonLd([
+    { name: "Home", path: "/" },
+    { name: "Projects", path: "/projects" },
+    { name: project.title, path: `/projects/${project.slug}` },
+  ]);
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(crumbsJsonLd) }}
+      />
       <Navbar />
       <main id="main" className="bg-paper">
         {/* Hero */}
@@ -84,7 +111,7 @@ export default async function ProjectPage({
                 <div className="relative aspect-[4/3]">
                   <Image
                     src={project.image}
-                    alt={project.title}
+                    alt={imageAlt}
                     fill
                     className="object-cover"
                     sizes="(max-width: 1024px) 100vw, 60vw"
@@ -102,7 +129,7 @@ export default async function ProjectPage({
                     >
                       <Image
                         src={img}
-                        alt={project.title}
+                        alt={`${imageAlt} — gallery photo`}
                         fill
                         className="object-cover"
                         sizes="200px"

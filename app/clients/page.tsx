@@ -3,6 +3,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { PageHeader } from "@/components/PageHeader";
 import { Clients } from "@/components/Clients";
+import { CertificateWall } from "@/components/CertificateWall";
 import { TrustStrip } from "@/components/TrustStrip";
 import { companyInfo } from "@/lib/data";
 import { getClients, getSettings } from "@/lib/content";
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
   title: `Clients & Partners | ${companyInfo.shortName}`,
   description:
     "Government bodies, defense sectors, port authorities, banking partners and the licenses that back AHS Enterprise.",
+  alternates: { canonical: "/clients" },
 };
 
 export const revalidate = 300;
@@ -23,11 +25,13 @@ export default async function ClientsPage() {
       <main id="main" className="bg-paper">
         <PageHeader
           crumb="Clients"
+          path="/clients"
           eyebrow="Trusted By"
           title="Clients & Partners"
           subtitle="A distinguished portfolio of government bodies, defense sectors, engineering authorities and banking partners."
         />
         <Clients clients={clients} />
+        <CertificateWall credentials={settings.credentials} />
         <TrustStrip
           bankingPartners={settings.bankingPartners}
           licenses={settings.licenses}

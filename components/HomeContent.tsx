@@ -28,6 +28,17 @@ export function HomeContent({
   company: CompanyInfo;
   faqs: FaqItem[];
 }) {
+  const yearValue = (year: string) => Number.parseInt(year, 10) || 0;
+  const featured = [...projects]
+    .sort((a, b) =>
+      a.status === b.status
+        ? yearValue(b.year) - yearValue(a.year)
+        : a.status === "ONGOING"
+          ? -1
+          : 1
+    )
+    .slice(0, 6);
+
   return (
     <>
       <Hero stats={stats} />
@@ -46,7 +57,7 @@ export function HomeContent({
         ]}
         riskHandling={["High water-flow conditions", "Emergency execution pressure", "Remote logistics"]}
       />
-      <ProjectsGrid projects={projects.slice(0, 6)} marquee />
+      <ProjectsGrid projects={featured} marquee />
       <Clients clients={clients} />
       <section className="bg-paper py-20">
         <div className="container-x">

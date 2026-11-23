@@ -85,3 +85,16 @@ stats, capability, licenses, banking partners, FAQs), `contactmessages` (saved b
 
 Pages are statically generated and refreshed every 5 minutes (`revalidate = 300`). Projects added to the
 database after a build are rendered on demand. A project appears on the map when it has `geo: { lat, lng, place }`.
+
+Set `NEXT_PUBLIC_SITE_URL` (e.g. `https://www.ahs-enterprise.com`) so canonical URLs, JSON-LD and the
+sitemap use the production origin.
+
+## Backups
+
+Download a JSON snapshot from **Admin → Dashboard → Download backup** (`GET /api/admin/backup`,
+admin-only). The file is named `ahs-backup-YYYY-MM-DD.json` and contains projects, services, clients,
+the settings document and contact messages — never admin users or password hashes.
+
+**M0 clusters have no Atlas backup.** Free MongoDB Atlas M0 clusters do not include automated Atlas
+backups, so on that tier this manual download is the only backup — take one regularly and keep a copy
+off the server until the cluster is upgraded to a tier with continuous backups.

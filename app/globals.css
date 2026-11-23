@@ -261,6 +261,24 @@ body {
   padding-right: 1.5rem;
 }
 
+.gallery-marquee--stacked {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.gallery-marquee__row {
+  overflow: hidden;
+}
+
+.gallery-marquee--stacked .gallery-marquee__track {
+  animation-duration: 70s;
+}
+
+.gallery-marquee__row--reverse .gallery-marquee__track {
+  animation-direction: reverse;
+}
+
 .marquee-3d {
   perspective: 900px;
   perspective-origin: 50% 50%;

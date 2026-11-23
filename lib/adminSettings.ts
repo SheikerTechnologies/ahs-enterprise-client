@@ -36,6 +36,35 @@ export function parseSettings(body: Record<string, unknown>): Result {
   if (faqs.some((s) => !s.q || !s.a)) return { error: "FAQ: every entry needs both a question and an answer." };
   if (faqs.length > 30) return { error: "FAQ: at most 30 entries." };
 
+  const timeline = arr(body.timeline)
+    .map((entry) => ({ year: str(obj(entry).year, 10), items: lines(obj(entry).items, 300, 12) }))
+    .filter((entry) => entry.year || entry.items.length);
+  if (timeline.some((entry) => !entry.year || !entry.items.length)) return { error: "Timeline: every year needs a label and at least one milestone." };
+  if (timeline.length > 40) return { error: "Timeline: at most 40 years." };
+
+  const whyChooseUs = arr(body.whyChooseUs)
+    .map((s) => ({ title: str(obj(s).title, 80), detail: str(obj(s).detail, 300) }))
+    .filter((s) => s.title || s.detail);
+  if (whyChooseUs.some((s) => !s.title || !s.detail)) return { error: "Why choose us: every row needs a title and a detail line." };
+  if (whyChooseUs.length > 8) return { error: "Why choose us: keep at most 8 rows." };
+
+  const howWeWork = arr(body.howWeWork)
+    .map((s) => ({ step: str(obj(s).step, 20), title: str(obj(s).title, 80), detail: str(obj(s).detail, 300) }))
+    .filter((s) => s.step || s.title || s.detail);
+  if (howWeWork.some((s) => !s.step || !s.title || !s.detail)) return { error: "How we work: every step needs a number, title and detail line." };
+  if (howWeWork.length > 10) return { error: "How we work: keep at most 10 steps." };
+
+  const credentials = arr(body.credentials)
+    .map((s) => ({
+      title: str(obj(s).title, 120),
+      issuer: str(obj(s).issuer, 160),
+      scope: str(obj(s).scope, 160),
+      icon: str(obj(s).icon, 40),
+    }))
+    .filter((s) => s.title || s.issuer || s.scope);
+  if (credentials.some((s) => !s.title || !s.issuer)) return { error: "Certificate wall: every certificate needs a title and an issuer." };
+  if (credentials.length > 40) return { error: "Certificate wall: at most 40 certificates." };
+
   const bs = obj(body.bankSolvency);
 
   return {
@@ -60,6 +89,10 @@ export function parseSettings(body: Record<string, unknown>): Result {
       bankingPartners: lines(body.bankingPartners, 100, 20),
       defenseSupplyGroups: lines(body.defenseSupplyGroups, 120, 30),
       faqs,
+      timeline,
+      whyChooseUs,
+      howWeWork,
+      credentials,
     },
   };
 }

@@ -101,6 +101,12 @@ export function SettingsForm({ initial }: { initial: SiteSettings }) {
   const [partners, setPartners] = useState(join(initial.bankingPartners));
   const [groups, setGroups] = useState(join(initial.defenseSupplyGroups));
   const [faqs, setFaqs] = useState<Row[]>(initial.faqs.map((f) => ({ ...f })));
+  const [timeline, setTimeline] = useState<Row[]>(
+    initial.timeline.map((t) => ({ year: t.year, items: join(t.items) }))
+  );
+  const [whyChooseUs, setWhyChooseUs] = useState<Row[]>(initial.whyChooseUs.map((w) => ({ ...w })));
+  const [howWeWork, setHowWeWork] = useState<Row[]>(initial.howWeWork.map((w) => ({ ...w })));
+  const [credentials, setCredentials] = useState<Row[]>(initial.credentials.map((c) => ({ ...c })));
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
 
@@ -125,6 +131,10 @@ export function SettingsForm({ initial }: { initial: SiteSettings }) {
           bankingPartners: split(partners),
           defenseSupplyGroups: split(groups),
           faqs,
+          timeline: timeline.map((t) => ({ year: t.year, items: split(t.items) })),
+          whyChooseUs,
+          howWeWork,
+          credentials,
         }),
       });
       const data = await res.json().catch(() => ({}));
@@ -171,6 +181,57 @@ export function SettingsForm({ initial }: { initial: SiteSettings }) {
         <Text name="bnote" text="Solvency note" value={bankNote} onChange={setBankNote} />
         <Lines name="partners" text="Banking partners" rows={5} value={partners} onChange={setPartners} />
         <Lines name="groups" text="DGDP-enlisted supply categories" rows={10} value={groups} onChange={setGroups} />
+      </Card>
+
+      <Card title="Company timeline" hint="Shown on the About page. Add the founding year and enlistment dates only once you have confirmed them.">
+        <Rows
+          items={timeline}
+          onChange={setTimeline}
+          addText="Add year"
+          fields={[
+            { key: "year", label: "Year" },
+            { key: "items", label: "Milestones", area: true },
+          ]}
+        />
+      </Card>
+
+      <Card title="Why choose us" hint="The short points shown on the About page.">
+        <Rows
+          items={whyChooseUs}
+          onChange={setWhyChooseUs}
+          addText="Add point"
+          fields={[
+            { key: "title", label: "Title" },
+            { key: "detail", label: "Detail" },
+          ]}
+        />
+      </Card>
+
+      <Card title="How we work" hint="The steps from tender/enquiry to handover, shown on the About page.">
+        <Rows
+          items={howWeWork}
+          onChange={setHowWeWork}
+          addText="Add step"
+          fields={[
+            { key: "step", label: "Step number" },
+            { key: "title", label: "Title" },
+            { key: "detail", label: "Detail", area: true },
+          ]}
+        />
+      </Card>
+
+      <Card title="Certificate wall" hint="Shown on the Clients page. Titles, issuers and scopes only — never add license numbers, TIN/BIN, validity dates or personal data.">
+        <Rows
+          items={credentials}
+          onChange={setCredentials}
+          addText="Add certificate"
+          fields={[
+            { key: "title", label: "Title" },
+            { key: "issuer", label: "Issuer" },
+            { key: "scope", label: "Scope" },
+            { key: "icon", label: "Icon (shield, plane, zap, globe, file-badge, receipt, landmark)" },
+          ]}
+        />
       </Card>
 
       <Card title="FAQ" hint="Shown on the FAQ page and in Google search results.">

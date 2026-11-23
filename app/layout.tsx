@@ -3,9 +3,9 @@ import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { MotionProvider } from "@/components/MotionProvider";
 import { getSettings } from "@/lib/content";
 import type { CompanyInfo } from "@/lib/data";
+import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
-const SITE_URL = "https://www.ahs-enterprise.com";
 const DESCRIPTION =
   "M/S A H S Enterprise — 1st Class Contractor, Importer, Exporter, Supplier & Indenting. Civil works, marine & submarine spares, riverbank protection, dredging, electrical installation and renewable power across Bangladesh since 2021.";
 
@@ -47,7 +47,9 @@ export const metadata: Metadata = {
 const buildJsonLd = (companyInfo: CompanyInfo) => ({
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
-  name: "M/S A H S Enterprise",
+  name: "AHS Enterprise",
+  legalName: "M/S A H S Enterprise",
+  alternateName: ["M/S A H S Enterprise", "AHS Enterprise Bangladesh"],
   url: SITE_URL,
   logo: `${SITE_URL}/images/logo.png`,
   description: DESCRIPTION,

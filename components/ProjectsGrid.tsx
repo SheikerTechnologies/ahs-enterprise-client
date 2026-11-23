@@ -28,7 +28,7 @@ function ProjectCard({
       <div className="relative aspect-[4/3] overflow-hidden">
         <Image
           src={project.image}
-          alt={project.title}
+          alt={`${project.title} — ${project.location}`}
           fill
           sizes={sizes}
           className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -76,6 +76,12 @@ export function ProjectsGrid({
   projects: Project[];
   marquee?: boolean;
 }) {
+  const perRow = Math.ceil(projects.length / 2);
+  const marqueeRows = [
+    projects.slice(0, perRow),
+    projects.slice(perRow),
+  ].filter((row) => row.length > 0);
+
   return (
     <section id="projects" className="relative bg-paper py-24 md:py-32">
       <div className="container-x">
@@ -89,36 +95,52 @@ export function ProjectsGrid({
               Work on the Ground
             </h2>
           </div>
-          <p className="max-w-xs text-sm text-ink-muted leading-relaxed">
-            {marquee
-              ? "Every plate in this reel is a real engagement — open one to see the client, location, duration and scope of work in full."
-              : "Every plate below is a real engagement — open one to see the client, location, duration and scope of work in full."}
-          </p>
+          <div className="max-w-xs">
+            <p className="text-sm text-ink-muted leading-relaxed">
+              {marquee
+                ? "Every plate in this reel is a real engagement — open one to see the client, location, duration and scope of work in full."
+                : "Every plate below is a real engagement — open one to see the client, location, duration and scope of work in full."}
+            </p>
+            <Link
+              href="/projects"
+              className="mt-4 inline-flex items-center gap-1.5 font-mono text-xs uppercase tracking-widest text-buoy hover:text-ink transition-colors"
+            >
+              View all projects
+              <ArrowUpRight size={14} />
+            </Link>
+          </div>
         </Reveal>
       </div>
 
       {marquee ? (
         <Reveal delay={0.1} className="mt-14">
-          <div className="gallery-marquee">
-            <div className="gallery-marquee__track">
-              {[0, 1].map((copy) => (
-                <div
-                  key={copy}
-                  className="gallery-marquee__group"
-                  aria-hidden={copy === 1}
-                >
-                  {projects.map((project) => (
-                    <ProjectCard
-                      key={`${copy}-${project.slug}`}
-                      project={project}
-                      sizes="(max-width: 640px) 280px, 320px"
-                      className="w-[17.5rem] shrink-0 sm:w-[20rem]"
-                      duplicate={copy === 1}
-                    />
+          <div className="gallery-marquee gallery-marquee--stacked">
+            {marqueeRows.map((row, rowIndex) => (
+              <div
+                key={rowIndex}
+                className={`gallery-marquee__row${rowIndex % 2 === 1 ? " gallery-marquee__row--reverse" : ""}`}
+              >
+                <div className="gallery-marquee__track">
+                  {[0, 1, 2, 3, 4, 5].map((copy) => (
+                    <div
+                      key={copy}
+                      className="gallery-marquee__group"
+                      aria-hidden={copy !== 0}
+                    >
+                      {row.map((project) => (
+                        <ProjectCard
+                          key={`${copy}-${project.slug}`}
+                          project={project}
+                          sizes="(max-width: 640px) 280px, 320px"
+                          className="w-[17.5rem] shrink-0 sm:w-[20rem]"
+                          duplicate={copy !== 0}
+                        />
+                      ))}
+                    </div>
                   ))}
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </Reveal>
       ) : (

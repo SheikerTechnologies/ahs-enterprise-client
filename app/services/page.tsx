@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   title: `Services | ${companyInfo.shortName}`,
   description:
     "Construction, marine engineering, defense supply, dredging, riverbank protection and more — the full range of services offered by AHS Enterprise.",
+  alternates: { canonical: "/services" },
 };
 
 export const revalidate = 300;
@@ -23,6 +24,7 @@ export default async function ServicesPage() {
       <main id="main" className="bg-paper">
         <PageHeader
           crumb="Services"
+          path="/services"
           eyebrow="What We Offer"
           title="Services & Capability"
           subtitle="From government tenders and civil works to marine machinery spares — delivered with quality control, cost-efficiency and timely execution."

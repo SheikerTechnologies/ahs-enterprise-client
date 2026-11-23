@@ -3,6 +3,7 @@ import { ProjectModel } from "@/lib/models/Project";
 import { ServiceModel } from "@/lib/models/Service";
 import { ClientModel } from "@/lib/models/Client";
 import { ContactMessageModel } from "@/lib/models/ContactMessage";
+import { Download } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -33,6 +34,19 @@ export default async function AdminDashboard() {
             <p className="mt-1 font-mono text-[0.65rem] uppercase tracking-widest text-ink-muted">{c.label}</p>
           </div>
         ))}
+      </div>
+
+      <div className="mt-8">
+        <a
+          href="/api/admin/backup"
+          className="inline-flex items-center gap-2 rounded-sm border border-ink/15 bg-white px-5 py-3 font-mono text-xs font-semibold uppercase tracking-widest text-ink hover:border-buoy hover:text-buoy transition-colors"
+        >
+          <Download size={15} />
+          Download backup
+        </a>
+        <p className="mt-2 text-xs text-ink-muted">
+          A JSON snapshot of projects, services, clients, settings and messages.
+        </p>
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
-import Link from "next/link";
 import Image from "next/image";
 import { getSettings } from "@/lib/content";
 import { ArrowUpRight } from "lucide-react";
+import { ScrollLink } from "./ScrollLink";
 
 const links = [
   { href: "/about", label: "About" },
@@ -25,7 +25,7 @@ export async function Footer() {
       <div className="container-x">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-3">
           <div>
-            <Link href="/" className="flex items-center gap-1">
+            <ScrollLink href="/" className="flex items-center gap-1">
               <Image
                 src="/images/logo.png"
                 alt="AHS Enterprise"
@@ -36,7 +36,7 @@ export async function Footer() {
               <span className="font-display text-lg font-extrabold uppercase tracking-wide text-white">
                 AHS <span className="text-amber">Enterprise</span>
               </span>
-            </Link>
+            </ScrollLink>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/50">
               {companyInfo.designation}. Building Bangladesh&apos;s
               infrastructure since 2021 — one project plate at a time.
@@ -49,13 +49,13 @@ export async function Footer() {
             </p>
             <div className="mt-4 grid grid-cols-2 gap-2.5">
               {links.map((l) => (
-                <Link
+                <ScrollLink
                   key={l.href}
                   href={l.href}
                   className="text-sm text-white/65 hover:text-amber transition-colors"
                 >
                   {l.label}
-                </Link>
+                </ScrollLink>
               ))}
             </div>
           </div>

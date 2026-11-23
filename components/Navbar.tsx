@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Menu, X, ArrowUpRight } from "lucide-react";
+import { ScrollLink } from "./ScrollLink";
 
 const links = [
   { href: "/", label: "Home" },
@@ -38,7 +38,7 @@ export function Navbar() {
       }`}
     >
       <div className="container-x flex h-16 items-center justify-between md:h-20">
-        <Link href="/" className="flex items-center gap-2.5 shrink-0">
+        <ScrollLink href="/" className="flex items-center gap-2.5 shrink-0">
           <Image
             src="/images/logo.png"
             alt="AHS Enterprise"
@@ -49,28 +49,28 @@ export function Navbar() {
           <span className="font-display text-lg md:text-xl font-extrabold uppercase tracking-wide text-white leading-none">
             AHS <span className="text-amber">Enterprise</span>
           </span>
-        </Link>
+        </ScrollLink>
 
         <nav className="hidden lg:flex items-center gap-8">
           {links.map((l) => (
-            <Link key={l.href} href={l.href}
+            <ScrollLink key={l.href} href={l.href}
               aria-current={isActive(l.href) ? "page" : undefined}
               className={`eyebrow transition-colors hover:text-amber ${
                 isActive(l.href) ? "text-amber" : "text-white/70"
               }`}
             >
               {l.label}
-            </Link>
+            </ScrollLink>
           ))}
         </nav>
 
-        <Link
+        <ScrollLink
           href="/contact"
           className="hidden lg:inline-flex items-center gap-1.5 rounded-sm bg-amber px-4 py-2.5 font-mono text-xs font-semibold uppercase tracking-wider text-ink hover:bg-white transition-colors"
         >
           Request a Quote
           <ArrowUpRight size={14} />
-        </Link>
+        </ScrollLink>
 
         <button
           onClick={() => setOpen((v) => !v)}
@@ -87,7 +87,7 @@ export function Navbar() {
         <div id="mobile-nav" className="lg:hidden bg-ink border-t border-white/10">
           <nav className="container-x flex flex-col py-4 gap-1">
             {links.map((l) => (
-              <Link
+              <ScrollLink
                 key={l.href}
                 href={l.href}
                 aria-current={isActive(l.href) ? "page" : undefined}
@@ -95,16 +95,16 @@ export function Navbar() {
                 className="py-3 font-mono text-sm uppercase tracking-wider text-white/80 hover:text-amber border-b border-white/5 last:border-none"
               >
                 {l.label}
-              </Link>
+              </ScrollLink>
             ))}
-            <Link
+            <ScrollLink
               href="/contact"
               onClick={() => setOpen(false)}
               className="mt-3 inline-flex items-center justify-center gap-1.5 rounded-sm bg-amber px-4 py-3 font-mono text-xs font-semibold uppercase tracking-wider text-ink"
             >
               Request a Quote
               <ArrowUpRight size={14} />
-            </Link>
+            </ScrollLink>
           </nav>
         </div>
       )}

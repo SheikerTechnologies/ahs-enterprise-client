@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   title: `Projects | ${companyInfo.shortName}`,
   description:
     "Completed and ongoing projects delivered by AHS Enterprise for BIWTA, Bangladesh Navy, DGDP, RAJUK and other national authorities.",
+  alternates: { canonical: "/projects" },
 };
 
 export const revalidate = 300;
@@ -23,6 +24,7 @@ export default async function ProjectsPage() {
       <main id="main" className="bg-paper">
         <PageHeader
           crumb="Projects"
+          path="/projects"
           eyebrow="Track Record"
           title="Projects"
           subtitle="Dredging, riverbank protection, civil works and marine supply — delivered for BIWTA, Bangladesh Navy, DGDP, RAJUK and more."

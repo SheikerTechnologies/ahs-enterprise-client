@@ -14,6 +14,8 @@ export type Project = {
   gallery: string[];
   details: { label: string; value: string }[];
   geo?: { lat: number; lng: number; place: string };
+  /** Set by MongoDB; used as the sitemap lastModified date. */
+  updatedAt?: string;
 };
 
 export const projects: Project[] = [
@@ -916,6 +918,11 @@ export const faqs: FaqItem[] = [
   },
 ];
 
+export type TimelineEntry = { year: string; items: string[] };
+export type Credential = { title: string; issuer: string; scope: string; icon: string };
+export type WhyPoint = { title: string; detail: string };
+export type ProcessStep = { step: string; title: string; detail: string };
+
 export type SiteSettings = {
   company: CompanyInfo;
   stats: Stat[];
@@ -927,7 +934,146 @@ export type SiteSettings = {
   bankingPartners: string[];
   defenseSupplyGroups: string[];
   faqs: FaqItem[];
+  timeline: TimelineEntry[];
+  whyChooseUs: WhyPoint[];
+  howWeWork: ProcessStep[];
+  credentials: Credential[];
 };
+
+// Timeline seeded only from completed/ongoing projects already listed above.
+// TODO(owner): confirm the founding year and the dates of each enlistment, then
+// add them to this timeline. Do not add unverified dates.
+export const timeline: TimelineEntry[] = [
+  {
+    year: "2021",
+    items: [
+      "Damp-proofing, tiles & stair railing at BIWTA Bhaban, Dhaka",
+      "Emergency geo-bag dumping at Aricha Ferryghat",
+      "New ferry ghat construction and annual maintenance at Narayanganj",
+    ],
+  },
+  {
+    year: "2022",
+    items: [
+      "Approach road to the Padma Bridge, Munshiganj",
+      "Approach road and inaugural gate at Baghabari River Port, Sirajganj",
+      "Riverbank repair on the Tulai River, Dinajpur (83 days)",
+    ],
+  },
+  {
+    year: "2023",
+    items: [
+      "Extension of low-water ferry ghats at Shimulia (Mawa)",
+      "Procurement of 200 H & O navigation marks for Sirajganj",
+    ],
+  },
+  {
+    year: "2024",
+    items: [
+      "Stationery supply for the passing parade at BNS Sher-E-Bangla, Patuakhali",
+      "Ancillary civil works at the Mongla Pilot House",
+    ],
+  },
+  {
+    year: "2025",
+    items: [
+      "Pontoon repair works (SP-385), Barishal",
+      "Residential tower at Jolshiri Abashon, Dhaka (ongoing)",
+    ],
+  },
+];
+
+export const whyChooseUs: WhyPoint[] = [
+  {
+    title: "Emergency mobilisation",
+    detail: "Crews, equipment and materials can be moved to site at short notice when a bank or structure is failing.",
+  },
+  {
+    title: "Tender-ready documentation",
+    detail: "Enlistments, licenses and financial references are kept current for government and defense procurement.",
+  },
+  {
+    title: "Nationwide reach",
+    detail: "Projects delivered across river ports, coastal districts and city sites, coordinated from Dhaka.",
+  },
+  {
+    title: "One accountable team",
+    detail: "The same team handles survey, procurement, execution and handover — no gaps between contractors.",
+  },
+];
+
+export const howWeWork: ProcessStep[] = [
+  {
+    step: "01",
+    title: "Tender / enquiry",
+    detail: "Share the scope, drawings or tender documents and the delivery timeline you are working to.",
+  },
+  {
+    step: "02",
+    title: "Survey & quotation",
+    detail: "We assess the site, confirm quantities and submit a costed, itemised quotation.",
+  },
+  {
+    step: "03",
+    title: "Mobilisation",
+    detail: "Crews, plant and materials are arranged and moved to site once the work order is confirmed.",
+  },
+  {
+    step: "04",
+    title: "Execution",
+    detail: "Work is carried out under supervision with progress reporting and quality checks.",
+  },
+  {
+    step: "05",
+    title: "Handover",
+    detail: "Completion documents, measurements and a joint site walk-through close out the engagement.",
+  },
+];
+
+export const credentials: Credential[] = [
+  {
+    title: "DGDP Enlisted Supplier",
+    issuer: "Directorate General of Defence Purchase",
+    scope: "10 supply categories",
+    icon: "shield",
+  },
+  {
+    title: "CAAB Enlisted Contractor",
+    issuer: "Civil Aviation Authority of Bangladesh",
+    scope: "Civil & E/M works",
+    icon: "plane",
+  },
+  {
+    title: "Electrical Contractor License",
+    issuer: "Electricity Licensing Board",
+    scope: "Class A, B & C",
+    icon: "zap",
+  },
+  {
+    title: "Import Registration Certificate (IRC)",
+    issuer: "Chief Controller of Imports & Exports",
+    scope: "Importer registration",
+    icon: "globe",
+  },
+  {
+    title: "Trade License",
+    issuer: "Dhaka Cantonment Board",
+    scope: "Trade & business operations",
+    icon: "file-badge",
+  },
+  {
+    title: "VAT Registration",
+    issuer: "National Board of Revenue (NBR)",
+    scope: "VAT-registered supplier",
+    icon: "receipt",
+  },
+  {
+    title: "Bank Solvency",
+    issuer: "Trust Bank PLC · NRBC Bank",
+    scope: "Financial solvency reference",
+    icon: "landmark",
+  },
+];
 
 export const defaultSettings: SiteSettings = {
   company: companyInfo,
@@ -940,4 +1086,8 @@ export const defaultSettings: SiteSettings = {
   bankingPartners,
   defenseSupplyGroups,
   faqs,
+  timeline,
+  whyChooseUs,
+  howWeWork,
+  credentials,
 };

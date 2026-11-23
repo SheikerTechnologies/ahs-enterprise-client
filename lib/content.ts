@@ -17,7 +17,8 @@ import { ServiceModel } from "./models/Service";
 import { ClientModel } from "./models/Client";
 import { SettingModel } from "./models/Setting";
 
-const STRIP = ["_id", "__v", "createdAt", "updatedAt", "order", "published"];
+// `updatedAt` is kept: the sitemap uses it as lastModified.
+const STRIP = ["_id", "__v", "createdAt", "order", "published"];
 
 function plain<T>(doc: unknown): T {
   const obj = JSON.parse(JSON.stringify(doc)) as Record<string, unknown>;

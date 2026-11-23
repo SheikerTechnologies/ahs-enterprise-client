@@ -9,6 +9,7 @@ import { getSettings } from "@/lib/content";
 export const metadata: Metadata = {
   title: `Contact | ${companyInfo.shortName}`,
   description: "Get in touch with AHS Enterprise for tenders, supply enquiries or project partnerships.",
+  alternates: { canonical: "/contact" },
 };
 
 export const revalidate = 300;
@@ -21,6 +22,7 @@ export default async function ContactPage() {
       <main id="main" className="bg-paper">
         <PageHeader
           crumb="Contact"
+          path="/contact"
           eyebrow="Reach Us"
           title="Talk to Our Team"
           subtitle="For tenders, supply enquiries, or project partnerships — reach us directly, or send a message below."
