@@ -16,6 +16,9 @@ export const metadata: Metadata = {
     template: "%s | AHS Enterprise",
   },
   description: DESCRIPTION,
+  verification: {
+  google: "V7mN0JW5eIobrWrCX8r9GFMIwM-UENQgwY55Y5mw-Yc",
+},
   keywords: [
     "AHS Enterprise",
     "BIWTA contractor",
