@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 const ALLOWED = ["image/jpeg", "image/png", "image/webp", "image/avif", "image/svg+xml"];
 const MAX_BYTES = 4 * 1024 * 1024;
-const FOLDERS = ["projects", "clients"];
+const FOLDERS = ["projects", "clients", "people"];
 
 export async function POST(req: Request) {
   const { error } = await requireAdmin(req);

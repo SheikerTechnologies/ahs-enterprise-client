@@ -83,6 +83,21 @@ export function parseSettings(body: Record<string, unknown>): Result {
   if (credentials.some((s) => !s.title || !s.issuer)) return { error: "Certificate wall: every certificate needs a title and an issuer." };
   if (credentials.length > 40) return { error: "Certificate wall: at most 40 certificates." };
 
+  const pm = obj(body.proprietorMessage);
+  const pmPhoto = str(pm.photo, 500);
+  if (pmPhoto && !pmPhoto.startsWith("/") && !pmPhoto.startsWith("https://")) {
+    return { error: "Proprietor message: the photo must start with / or https://." };
+  }
+  const proprietorMessage = {
+    heading: str(pm.heading, 160),
+    subheading: str(pm.subheading, 200),
+    photo: pmPhoto,
+    paragraphs: lines(pm.paragraphs, 1500, 8),
+    closing: str(pm.closing, 1500),
+    bengaliHeading: str(pm.bengaliHeading, 200),
+    bengaliParagraphs: lines(pm.bengaliParagraphs, 1500, 8),
+  };
+
   const bs = obj(body.bankSolvency);
 
   return {
@@ -113,6 +128,7 @@ export function parseSettings(body: Record<string, unknown>): Result {
       whyChooseUs,
       howWeWork,
       credentials,
+      proprietorMessage,
     },
   };
 }

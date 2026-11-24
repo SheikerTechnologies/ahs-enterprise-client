@@ -932,6 +932,16 @@ export type Credential = { title: string; issuer: string; scope: string; icon: s
 export type WhyPoint = { title: string; detail: string };
 export type ProcessStep = { step: string; title: string; detail: string };
 
+export type ProprietorMessage = {
+  heading: string;
+  subheading: string;
+  photo: string;
+  paragraphs: string[];
+  closing: string;
+  bengaliHeading: string;
+  bengaliParagraphs: string[];
+};
+
 export type SiteSettings = {
   company: CompanyInfo;
   offices: Office[];
@@ -948,6 +958,7 @@ export type SiteSettings = {
   whyChooseUs: WhyPoint[];
   howWeWork: ProcessStep[];
   credentials: Credential[];
+  proprietorMessage: ProprietorMessage;
 };
 
 // Timeline seeded only from completed/ongoing projects already listed above.
@@ -992,6 +1003,25 @@ export const timeline: TimelineEntry[] = [
     ],
   },
 ];
+
+export const proprietorMessage: ProprietorMessage = {
+  heading: "Built on Trust, Delivered with Precision",
+  subheading: "Welcome to M/S A H S Enterprise",
+  photo: "/images/people/MdSohanurRahmanSohan.jpeg",
+  paragraphs: [
+    "Our journey began with a vision - \"We Build Tomorrow\" - to establish a benchmark of unyielding reliability, top-tier quality, and strategic innovation in Bangladesh's most vital sectors. Through M/S. AHS Enterprise we have had the distinct honour of serving as a trusted partner to both the military and civil sectors of our nation.",
+    "From executing high-stakes strategic projects for the Bangladesh Armed Forces through the DGDP, to delivering critical maritime solutions for the Bangladesh Navy (including the prestigious supply of submarine machinery spares), our track record speaks for itself. Our deep-rooted enlistments with premier national authorities - such as Dhaka Cantonment Board, BIWTA, PWD, HED, CAAB, MES, BADC, RAJUK, DPHE, CPA and PPA - reflect a legacy built entirely on trust and flawless execution.",
+    "The same discipline now runs across the AHS Group, alongside our sister concerns AHS Properties & Development Ltd. in real estate and Sun Solaris Limited in renewable energy.",
+  ],
+  closing:
+    "To our clients, partners, and stakeholders: thank you for your unwavering trust. We pledge to keep delivering superior results and building a stronger future for Bangladesh.",
+  bengaliHeading: "",
+  // TODO(owner): proofread / complete Bengali. The Bengali paragraphs from the
+  // source component were not supplied with this change, so they are seeded
+  // empty — the Bengali block stays hidden on the site until text is added here
+  // or in the admin panel. Do not machine-translate.
+  bengaliParagraphs: [],
+};
 
 export const whyChooseUs: WhyPoint[] = [
   {
@@ -1118,4 +1148,5 @@ export const defaultSettings: SiteSettings = {
   whyChooseUs,
   howWeWork,
   credentials,
+  proprietorMessage,
 };

@@ -3,6 +3,7 @@
 import { useState, type FormEvent, type ReactNode } from "react";
 import { ArrowDown, ArrowUp, Plus, Trash2 } from "lucide-react";
 import type { SiteSettings } from "@/lib/data";
+import { ImageField } from "./ImageUploader";
 
 const input = "w-full rounded-sm border border-ink/15 bg-white px-3 py-2.5 text-sm text-ink outline-none focus:border-buoy";
 const label = "mb-1.5 block font-mono text-[0.65rem] uppercase tracking-widest text-ink-muted";
@@ -91,6 +92,23 @@ const split = (s: string) => s.split("\n");
 
 export function SettingsForm({ initial }: { initial: SiteSettings }) {
   const [company, setCompany] = useState({ ...initial.company, phones: join(initial.company.phones) });
+  const [proprietor, setProprietor] = useState<{
+    heading: string;
+    subheading: string;
+    photo: string;
+    paragraphs: Row[];
+    closing: string;
+    bengaliHeading: string;
+    bengaliParagraphs: Row[];
+  }>({
+    heading: initial.proprietorMessage.heading,
+    subheading: initial.proprietorMessage.subheading,
+    photo: initial.proprietorMessage.photo,
+    paragraphs: initial.proprietorMessage.paragraphs.map((text) => ({ text })),
+    closing: initial.proprietorMessage.closing,
+    bengaliHeading: initial.proprietorMessage.bengaliHeading,
+    bengaliParagraphs: initial.proprietorMessage.bengaliParagraphs.map((text) => ({ text })),
+  });
   const [offices, setOffices] = useState<Row[]>(
     initial.offices.map((o) => ({ label: o.label, address: o.address, phone: o.phone ?? "", mapQuery: o.mapQuery ?? "" }))
   );
@@ -114,6 +132,8 @@ export function SettingsForm({ initial }: { initial: SiteSettings }) {
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
 
   const setC = (k: keyof typeof company, v: string) => setCompany((p) => ({ ...p, [k]: v }));
+  const setP = (k: "heading" | "subheading" | "photo" | "closing" | "bengaliHeading", v: string) =>
+    setProprietor((p) => ({ ...p, [k]: v }));
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -125,6 +145,15 @@ export function SettingsForm({ initial }: { initial: SiteSettings }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           company: { ...company, phones: split(company.phones) },
+          proprietorMessage: {
+            heading: proprietor.heading,
+            subheading: proprietor.subheading,
+            photo: proprietor.photo,
+            paragraphs: proprietor.paragraphs.map((r) => r.text),
+            closing: proprietor.closing,
+            bengaliHeading: proprietor.bengaliHeading,
+            bengaliParagraphs: proprietor.bengaliParagraphs.map((r) => r.text),
+          },
           offices,
           stats,
           capability,
@@ -165,6 +194,47 @@ export function SettingsForm({ initial }: { initial: SiteSettings }) {
         <div className="grid gap-4 sm:grid-cols-2">
           <Text name="c-prop" text="Proprietor name" value={company.proprietor} onChange={(v) => setC("proprietor", v)} />
           <Text name="c-proptitle" text="Proprietor title" value={company.proprietorTitle} onChange={(v) => setC("proprietorTitle", v)} />
+        </div>
+      </Card>
+
+      <Card
+        title="Proprietor message"
+        hint="Shown on the About page. Blank paragraphs are dropped. The photo is uploaded to the people folder."
+      >
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Text name="pm-heading" text="Heading" value={proprietor.heading} onChange={(v) => setP("heading", v)} />
+          <Text name="pm-sub" text="Subheading" value={proprietor.subheading} onChange={(v) => setP("subheading", v)} />
+        </div>
+        <ImageField
+          id="pm-photo"
+          text="Portrait photo"
+          folder="people"
+          value={proprietor.photo}
+          onChange={(v) => setP("photo", v)}
+          hint="A 4:5 portrait works best. Use a site path (/images/…) or an https:// link."
+        />
+        <Rows
+          items={proprietor.paragraphs}
+          onChange={(rows) => setProprietor((p) => ({ ...p, paragraphs: rows }))}
+          addText="Add paragraph"
+          fields={[{ key: "text", label: "Paragraph", area: true }]}
+        />
+        <div>
+          <label htmlFor="pm-closing" className={label}>Closing line</label>
+          <textarea id="pm-closing" className={input} rows={3} value={proprietor.closing} onChange={(e) => setP("closing", e.target.value)} />
+        </div>
+        <div className="space-y-4 border-t border-ink/10 pt-4">
+          <div>
+            <p className="font-mono text-[0.65rem] uppercase tracking-widest text-ink">Bengali</p>
+            <p className="mt-1 text-xs text-ink-muted">Optional. The Bengali block stays hidden on the site until it has text. Add only proofread text — never machine translations.</p>
+          </div>
+          <Text name="pm-bn-heading" text="Bengali heading" value={proprietor.bengaliHeading} onChange={(v) => setP("bengaliHeading", v)} />
+          <Rows
+            items={proprietor.bengaliParagraphs}
+            onChange={(rows) => setProprietor((p) => ({ ...p, bengaliParagraphs: rows }))}
+            addText="Add Bengali paragraph"
+            fields={[{ key: "text", label: "Bengali paragraph", area: true }]}
+          />
         </div>
       </Card>
 

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { PageHeader } from "@/components/PageHeader";
@@ -7,6 +8,7 @@ import { Reveal } from "@/components/Reveal";
 import { companyInfo } from "@/lib/data";
 import { getSettings } from "@/lib/content";
 import { Download, FileText, Building2, Sun, HardHat, ArrowUpRight } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 export const metadata: Metadata = {
   title: `About | ${companyInfo.shortName}`,
@@ -15,12 +17,23 @@ export const metadata: Metadata = {
   alternates: { canonical: "/about" },
 };
 
-const groupCompanies = [
+type GroupCompany = {
+  name: string;
+  role: string;
+  desc: string;
+  icon: LucideIcon;
+  logo?: string;
+  current?: boolean;
+  href: string;
+};
+
+const groupCompanies: GroupCompany[] = [
   {
     name: "AHS Enterprise",
     role: "Contracting, Marine Supply & Indenting",
     desc: "1st Class Contractor, Importer, Exporter, Supplier & Indenting Agent — the group's founding company since 2021.",
     icon: HardHat,
+    logo: "/images/logo.png",
     current: true,
     href: "/",
   },
@@ -43,7 +56,8 @@ const groupCompanies = [
 export const revalidate = 300;
 
 export default async function AboutPage() {
-  const { company, timeline, whyChooseUs, howWeWork } = await getSettings();
+  const settings = await getSettings();
+  const { timeline, whyChooseUs, howWeWork } = settings;
   return (
     <>
       <Navbar />
@@ -55,7 +69,7 @@ export default async function AboutPage() {
           title="About AHS Enterprise"
           subtitle="A first-class contractor, importer, exporter, supplier and indenting agent trusted by Bangladesh's military and civil sectors alike."
         />
-        <About company={company} />
+        <About settings={settings} />
 
         {/* Company timeline */}
         <section className="relative border-t border-ink/10 bg-paper py-20 md:py-28 overflow-hidden">
@@ -199,7 +213,19 @@ export default async function AboutPage() {
                 const content = (
                   <>
                     <div className="flex items-start justify-between">
-                      <Icon className="text-amber" size={26} strokeWidth={1.6} />
+                      {c.logo ? (
+                        <span className="inline-flex h-12 items-center rounded-sm bg-white px-3">
+                          <Image
+                            src={c.logo}
+                            alt={`${c.name} logo`}
+                            width={180}
+                            height={52}
+                            className="h-8 w-auto object-contain"
+                          />
+                        </span>
+                      ) : (
+                        <Icon className="text-amber" size={26} strokeWidth={1.6} aria-hidden />
+                      )}
                       {!c.current && (
                         <ArrowUpRight
                           size={16}
