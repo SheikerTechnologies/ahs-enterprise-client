@@ -19,7 +19,10 @@ const group = [
 ];
 
 export async function Footer() {
-  const { company: companyInfo } = await getSettings();
+  const { company: companyInfo, offices } = await getSettings();
+  const officeList = offices?.length
+    ? offices
+    : [{ label: "Head Office", address: companyInfo.address }];
   return (
     <footer className="relative bg-ink border-t border-white/10 pt-16 pb-8">
       <div className="container-x">
@@ -64,10 +67,17 @@ export async function Footer() {
             <p className="font-mono text-[0.68rem] uppercase tracking-widest text-white/40">
               Contact
             </p>
-            <div className="mt-4 space-y-2 text-sm text-white/65">
+            <div className="mt-4 space-y-3 text-sm text-white/65">
               <p>{companyInfo.phones.join(" · ")}</p>
               <p>{companyInfo.email}</p>
-              <p>{companyInfo.address}</p>
+              {officeList.map((office) => (
+                <p key={office.label}>
+                  <span className="block font-mono text-[0.6rem] uppercase tracking-widest text-white/40">
+                    {office.label}
+                  </span>
+                  {office.address}
+                </p>
+              ))}
             </div>
           </div>
         </div>

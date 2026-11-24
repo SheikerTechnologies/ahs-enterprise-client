@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 export const revalidate = 300;
 
 export default async function ContactPage() {
-  const { company } = await getSettings();
+  const { company, offices } = await getSettings();
   return (
     <>
       <Navbar />
@@ -27,7 +27,7 @@ export default async function ContactPage() {
           title="Talk to Our Team"
           subtitle="For tenders, supply enquiries, or project partnerships — reach us directly, or send a message below."
         />
-        <Contact company={company} />
+        <Contact company={company} offices={offices} />
       </main>
       <Footer />
     </>

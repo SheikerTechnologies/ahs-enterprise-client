@@ -1,14 +1,24 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Reveal } from "./Reveal";
-import type { CompanyInfo } from "@/lib/data";
+import type { CompanyInfo, Office } from "@/lib/data";
 import { Phone, Mail, MapPin, ArrowUpRight, Send, MessageCircle, FileDown, CheckCircle2, AlertCircle, Loader2, X } from "lucide-react";
 
 type Status = { state: "idle" | "sending" | "success" | "error"; message?: string };
 
-export function Contact({ company: companyInfo }: { company: CompanyInfo }) {
+export function Contact({ company: companyInfo, offices = [] }: { company: CompanyInfo; offices?: Office[] }) {
+  // The first office is the primary address; fall back to company.address for
+  // sites whose settings document predates the offices list.
+  const officeList: Office[] = offices.length
+    ? offices
+    : [{ label: "Head Office", address: companyInfo.address }];
+  const [activeOffice, setActiveOffice] = useState(0);
+  const activeIndex = Math.min(activeOffice, officeList.length - 1);
+  const active = officeList[activeIndex];
+  const primaryOffice = officeList[0];
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [status, setStatus] = useState<Status>({ state: "idle" });
   const isSending = status.state === "sending";
   const isSuccess = status.state === "success";
@@ -16,6 +26,19 @@ export function Contact({ company: companyInfo }: { company: CompanyInfo }) {
 
   function closePopup() {
     if (!isSending) setStatus({ state: "idle" });
+  }
+
+  function onTabKeyDown(e: ReactKeyboardEvent<HTMLButtonElement>, i: number) {
+    const last = officeList.length - 1;
+    let next = i;
+    if (e.key === "ArrowRight") next = i === last ? 0 : i + 1;
+    else if (e.key === "ArrowLeft") next = i === 0 ? last : i - 1;
+    else if (e.key === "Home") next = 0;
+    else if (e.key === "End") next = last;
+    else return;
+    e.preventDefault();
+    setActiveOffice(next);
+    tabRefs.current[next]?.focus();
   }
 
   useEffect(() => {
@@ -87,7 +110,12 @@ export function Contact({ company: companyInfo }: { company: CompanyInfo }) {
                 </a>
                 <div className="flex items-start gap-3 text-sm text-white/85">
                   <MapPin size={16} className="mt-0.5 shrink-0 text-amber" />
-                  {companyInfo.address}
+                  <span>
+                    <span className="block font-mono text-[0.65rem] uppercase tracking-widest text-white/40">
+                      {primaryOffice.label}
+                    </span>
+                    {primaryOffice.address}
+                  </span>
                 </div>
               </div>
 
@@ -153,18 +181,86 @@ export function Contact({ company: companyInfo }: { company: CompanyInfo }) {
           </div>
         </div>
 
-        {/* Map */}
+        {/* Offices */}
+        <Reveal delay={0.1} className="mt-10">
+          <p className="eyebrow flex items-center gap-3 text-ink-muted">
+            <span className="h-px w-8 bg-amber" />
+            Our Offices
+          </p>
+          <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-3">
+            {officeList.map((office) => (
+              <div
+                key={office.label}
+                className="rounded-sm border border-ink/10 bg-white p-6"
+              >
+                <p className="font-mono text-[0.65rem] uppercase tracking-widest text-buoy">
+                  {office.label}
+                </p>
+                <p className="mt-3 text-sm leading-relaxed text-ink-muted">
+                  {office.address}
+                </p>
+                {office.phone && (
+                  <a
+                    href={`tel:${office.phone.replace(/\s+/g, "")}`}
+                    className="mt-3 inline-flex items-center gap-2 text-sm text-ink hover:text-buoy transition-colors"
+                  >
+                    <Phone size={14} className="text-buoy" />
+                    {office.phone}
+                  </a>
+                )}
+              </div>
+            ))}
+          </div>
+        </Reveal>
+
+        {/* Map — follows the selected office */}
         <Reveal delay={0.15} className="mt-6 overflow-hidden rounded-sm border border-ink/10">
-          <iframe
-            title="AHS Enterprise office location — Rajnigandha Tower, Dhaka Cantonment"
-            src="https://www.google.com/maps?q=Rajnigandha+Tower+Dhaka+Cantonment+Dhaka+Bangladesh&output=embed"
-            width="100%"
-            height="360"
-            style={{ border: 0 }}
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            className="grayscale-[20%]"
-          />
+          <div
+            role="tablist"
+            aria-label="Office map"
+            className="flex flex-wrap gap-2 border-b border-ink/10 bg-white p-3"
+          >
+            {officeList.map((office, i) => (
+              <button
+                key={office.label}
+                ref={(el) => {
+                  tabRefs.current[i] = el;
+                }}
+                type="button"
+                role="tab"
+                id={`office-tab-${i}`}
+                aria-selected={i === activeIndex}
+                aria-controls="office-map-panel"
+                tabIndex={i === activeIndex ? 0 : -1}
+                onClick={() => setActiveOffice(i)}
+                onKeyDown={(e) => onTabKeyDown(e, i)}
+                className={`rounded-sm px-3 py-2 font-mono text-[0.65rem] uppercase tracking-widest transition-colors ${
+                  i === activeIndex
+                    ? "bg-ink text-white"
+                    : "text-ink-muted hover:bg-fog hover:text-ink"
+                }`}
+              >
+                {office.label}
+              </button>
+            ))}
+          </div>
+          <div
+            role="tabpanel"
+            id="office-map-panel"
+            aria-labelledby={`office-tab-${activeIndex}`}
+          >
+            <iframe
+              key={activeIndex}
+              title={`${active.label} location map — ${active.address}`}
+              src={`https://www.google.com/maps?q=${encodeURIComponent(active.mapQuery || active.address)}&output=embed`}
+              width="100%"
+              height="360"
+              style={{ border: 0 }}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              className="grayscale-[20%]"
+            />
+          </div>
         </Reveal>
       </div>
 

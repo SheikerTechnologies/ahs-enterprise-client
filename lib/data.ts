@@ -873,7 +873,9 @@ export const companyInfo = {
   designation: "1st Class Contractor, Importer, Exporter, Supplier & Indenting",
   phones: ["+88 01625-555700", "+88 01725-555700"],
   email: "ahsenterprise21@gmail.com",
-  address: "Rajnigandha Tower, 2nd Floor, Dhaka Cantonment",
+  // Kept for backwards compatibility. Always derived from offices[0].address
+  // wherever it is displayed — edit the Offices list instead.
+  address: "W-20/2, 67/1, China Town, VIP Road, Naya Palton, Dhaka-1000.",
   proprietor: "Md. Sohanur Rahman Sohan",
   proprietorTitle: "Proprietor, AHS Enterprise",
 };
@@ -918,6 +920,13 @@ export const faqs: FaqItem[] = [
   },
 ];
 
+export type Office = {
+  label: string;
+  address: string;
+  phone?: string;
+  mapQuery?: string;
+};
+
 export type TimelineEntry = { year: string; items: string[] };
 export type Credential = { title: string; issuer: string; scope: string; icon: string };
 export type WhyPoint = { title: string; detail: string };
@@ -925,6 +934,7 @@ export type ProcessStep = { step: string; title: string; detail: string };
 
 export type SiteSettings = {
   company: CompanyInfo;
+  offices: Office[];
   stats: Stat[];
   capability: CapabilityItem[];
   executionStrengths: string[];
@@ -1075,8 +1085,26 @@ export const credentials: Credential[] = [
   },
 ];
 
+// The first office is the primary one. Spellings are used as supplied by the
+// owner — do not "correct" them.
+export const defaultOffices: Office[] = [
+  {
+    label: "Corporate HQ",
+    address: "W-20/2, 67/1, China Town, VIP Road, Naya Palton, Dhaka-1000.",
+  },
+  {
+    label: "Military Office",
+    address: "2nd Floor, Rajanigandha Tower, Dhaka Cantonment",
+  },
+  {
+    label: "Lakeside Complex",
+    address: "Plot-42, Road-505, Sector-16, Jolshiri Abashon",
+  },
+];
+
 export const defaultSettings: SiteSettings = {
   company: companyInfo,
+  offices: defaultOffices,
   stats,
   capability,
   executionStrengths,

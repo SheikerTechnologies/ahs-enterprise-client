@@ -91,6 +91,9 @@ const split = (s: string) => s.split("\n");
 
 export function SettingsForm({ initial }: { initial: SiteSettings }) {
   const [company, setCompany] = useState({ ...initial.company, phones: join(initial.company.phones) });
+  const [offices, setOffices] = useState<Row[]>(
+    initial.offices.map((o) => ({ label: o.label, address: o.address, phone: o.phone ?? "", mapQuery: o.mapQuery ?? "" }))
+  );
   const [stats, setStats] = useState<Row[]>(initial.stats.map((s) => ({ ...s })));
   const [capability, setCapability] = useState<Row[]>(initial.capability.map((s) => ({ ...s })));
   const [execution, setExecution] = useState(join(initial.executionStrengths));
@@ -122,6 +125,7 @@ export function SettingsForm({ initial }: { initial: SiteSettings }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           company: { ...company, phones: split(company.phones) },
+          offices,
           stats,
           capability,
           executionStrengths: split(execution),
@@ -157,12 +161,28 @@ export function SettingsForm({ initial }: { initial: SiteSettings }) {
           <Text name="c-email" text="Email" value={company.email} onChange={(v) => setC("email", v)} />
         </div>
         <Text name="c-desig" text="Designation (shown under the name)" value={company.designation} onChange={(v) => setC("designation", v)} />
-        <Text name="c-addr" text="Address" value={company.address} onChange={(v) => setC("address", v)} />
         <Lines name="c-phones" text="Phone numbers" rows={3} value={company.phones} onChange={(v) => setC("phones", v)} hint="One per line. The first number is also used for the WhatsApp button, so write it like +88 01625-555700." />
         <div className="grid gap-4 sm:grid-cols-2">
           <Text name="c-prop" text="Proprietor name" value={company.proprietor} onChange={(v) => setC("proprietor", v)} />
           <Text name="c-proptitle" text="Proprietor title" value={company.proprietorTitle} onChange={(v) => setC("proprietorTitle", v)} />
         </div>
+      </Card>
+
+      <Card
+        title="Offices"
+        hint="Shown on the Contact page, footer and map. The first office is the primary address used on the rest of the site. Use the arrows to reorder."
+      >
+        <Rows
+          items={offices}
+          onChange={setOffices}
+          addText="Add office"
+          fields={[
+            { key: "label", label: "Label" },
+            { key: "phone", label: "Phone (optional)" },
+            { key: "address", label: "Address", area: true },
+            { key: "mapQuery", label: "Map search query (optional — defaults to the address)", area: true },
+          ]}
+        />
       </Card>
 
       <Card title="Homepage numbers" hint="The figures in the strip under the hero (e.g. 55+ Projects Delivered). Use the arrows to reorder.">

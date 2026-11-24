@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { MotionProvider } from "@/components/MotionProvider";
 import { getSettings } from "@/lib/content";
-import type { CompanyInfo } from "@/lib/data";
+import type { CompanyInfo, Office } from "@/lib/data";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
@@ -44,26 +44,50 @@ export const metadata: Metadata = {
   },
 };
 
-const buildJsonLd = (companyInfo: CompanyInfo) => ({
-  "@context": "https://schema.org",
-  "@type": "LocalBusiness",
-  name: "AHS Enterprise",
-  legalName: "M/S A H S Enterprise",
-  alternateName: ["M/S A H S Enterprise", "AHS Enterprise Bangladesh"],
-  url: SITE_URL,
-  logo: `${SITE_URL}/images/logo.png`,
-  description: DESCRIPTION,
-  telephone: companyInfo.phones[0],
-  email: companyInfo.email,
-  foundingDate: "2021",
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: companyInfo.address,
-    addressLocality: "Dhaka",
-    addressCountry: "BD",
-  },
-  sameAs: ["https://ahspdl.com", "https://sunsolaris.ltd"],
-});
+const buildJsonLd = (companyInfo: CompanyInfo, offices: Office[]) => {
+  const allOffices = offices?.length
+    ? offices
+    : [{ label: "Head Office", address: companyInfo.address }];
+  const primary = allOffices[0];
+  const otherOffices = allOffices.slice(1);
+  return {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    name: "AHS Enterprise",
+    legalName: "M/S A H S Enterprise",
+    alternateName: ["M/S A H S Enterprise", "AHS Enterprise Bangladesh"],
+    url: SITE_URL,
+    image: `${SITE_URL}/images/logo.png`,
+    logo: `${SITE_URL}/images/logo.png`,
+    description: DESCRIPTION,
+    telephone: companyInfo.phones[0],
+    email: companyInfo.email,
+    foundingDate: "2021",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: primary.address,
+      addressLocality: "Dhaka",
+      addressCountry: "BD",
+    },
+    // TODO(owner): add `geo` (latitude/longitude), `openingHoursSpecification`
+    // and `priceRange` once those details are confirmed — the Rich Results
+    // Test flags them as recommended, but they must not be invented.
+    ...(otherOffices.length
+      ? {
+          location: otherOffices.map((office) => ({
+            "@type": "Place",
+            name: office.label,
+            address: {
+              "@type": "PostalAddress",
+              streetAddress: office.address,
+              addressCountry: "BD",
+            },
+          })),
+        }
+      : {}),
+    sameAs: ["https://ahspdl.com", "https://sunsolaris.ltd"],
+  };
+};
 
 export const revalidate = 300;
 
@@ -72,7 +96,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { company } = await getSettings();
+  const { company, offices } = await getSettings();
   return (
     <html lang="en">
       <body className="bg-paper text-ink antialiased">
@@ -81,7 +105,7 @@ export default async function RootLayout({
         </a>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(buildJsonLd(company)) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(buildJsonLd(company, offices)) }}
         />
         <MotionProvider>{children}</MotionProvider>
         <WhatsAppButton phone={company.phones[0]} />

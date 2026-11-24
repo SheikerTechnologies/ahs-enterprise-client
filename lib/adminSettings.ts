@@ -22,7 +22,25 @@ export function parseSettings(body: Record<string, unknown>): Result {
   if (!shortName) return { error: "Company: short name is required." };
   if (!phones.length) return { error: "Company: add at least one phone number." };
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { error: "Company: enter a valid email address." };
-  if (!str(c.address, 300)) return { error: "Company: address is required." };
+
+  // Blank rows are dropped; the first office is the primary address.
+  const offices = arr(body.offices)
+    .map((s) => ({
+      label: str(obj(s).label, 60),
+      address: str(obj(s).address, 300),
+      phone: str(obj(s).phone, 200),
+      mapQuery: str(obj(s).mapQuery, 200),
+    }))
+    .filter((s) => s.label || s.address)
+    .map((s) => ({
+      label: s.label,
+      address: s.address,
+      ...(s.phone ? { phone: s.phone } : {}),
+      ...(s.mapQuery ? { mapQuery: s.mapQuery } : {}),
+    }));
+  if (!offices.length) return { error: "Offices: add at least one office." };
+  if (offices.length > 6) return { error: "Offices: keep at most 6 offices." };
+  if (offices.some((s) => !s.label || !s.address)) return { error: "Offices: every office needs a label and an address." };
 
   const stats = arr(body.stats).map((s) => ({ value: str(obj(s).value, 30), label: str(obj(s).label, 80) })).filter((s) => s.value || s.label);
   if (stats.some((s) => !s.value || !s.label)) return { error: "Hero numbers: every row needs both a number and a label." };
@@ -76,10 +94,12 @@ export function parseSettings(body: Record<string, unknown>): Result {
         designation: str(c.designation, 200),
         phones,
         email,
-        address: str(c.address, 300),
+        // Derived from the primary office so it can never drift from offices[0].
+        address: offices[0].address,
         proprietor: str(c.proprietor, 120),
         proprietorTitle: str(c.proprietorTitle, 120),
       },
+      offices,
       stats,
       capability,
       executionStrengths: lines(body.executionStrengths, 200, 30),
